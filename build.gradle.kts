@@ -37,9 +37,14 @@ tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }
 
+val isCiOrCd: String? by project
+
 tasks.withType<Jar>() {
     manifest {
         attributes["Main-Class"] = "fr.fabienhebuterne.mcscan.McScanKt"
+    }
+    if (isCiOrCd != null) {
+        archiveFileName.set("McScanKt.jar")
     }
     configurations["compileClasspath"].forEach { file: File ->
         from(zipTree(file.absoluteFile))
