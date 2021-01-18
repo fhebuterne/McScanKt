@@ -1,4 +1,4 @@
-name: MarketPlace CD - Java 8 with Kotlin
+name: McScanKt CD - Java 11 with Kotlin
 
 on:
   push:
