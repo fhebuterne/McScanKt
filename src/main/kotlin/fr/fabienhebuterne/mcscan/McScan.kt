@@ -1,7 +1,7 @@
 package fr.fabienhebuterne.mcscan
 
-import fr.fabienhebuterne.mcscan.service.AnalyseWorldService
-import fr.fabienhebuterne.mcscan.service.CountItemService
+import fr.fabienhebuterne.mcscan.domain.AnalyseWorldService
+import fr.fabienhebuterne.mcscan.domain.CountItemService
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import mu.KotlinLogging
@@ -18,9 +18,9 @@ fun main(args: Array<String>) {
     initKodein()
 
     val parser = ArgParser("mcscan")
-    val worldFolder by parser.option(ArgType.String, shortName = "world", description = "World folder")
-    val regionFile by parser.option(ArgType.String, shortName = "region", description = "Region file .mca")
-    val playerData by parser.option(ArgType.String, shortName = "player", description = "Player data .dat")
+    val worldFolder by parser.option(ArgType.String, shortName = "w", description = "World folder")
+    val regionFile by parser.option(ArgType.String, shortName = "r", description = "Region file .mca")
+    val playerData by parser.option(ArgType.String, shortName = "p", description = "Player data .dat")
     parser.parse(args)
 
     logger.info { "Starting McScan..." }
@@ -33,7 +33,8 @@ fun main(args: Array<String>) {
     }
 
     regionFile?.let {
-
+        val region = File(it)
+        analyseWorldService.analyseRegion(region)
     }
 
     playerData?.let {

@@ -1,6 +1,10 @@
 # McScanKt
 
-McScan is a software for analyzing a minecraft map and to show items with a changed name and / or a description to do a ranking
+McScanKt is a software for analyzing a minecraft map and to show items with a changed name and / or a description to do a ranking
+
+This is a refactoring with better external nbt library from my old java project : https://github.com/fhebuterne/mc-scan
+
+This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language).
 
 ## Requirements
 
@@ -8,7 +12,7 @@ McScan is a software for analyzing a minecraft map and to show items with a chan
 
 ## Build
 
-McScan use Gradle 6, to build use this command :
+McScanKt use Gradle 6, to build use this command :
 
 ```
 gradlew clean build
@@ -16,16 +20,16 @@ gradlew clean build
 
 ## Usage
 
-McScan jar is in `./build/libs/` folder, to use :
+McScanKt jar is in `./build/libs/` folder, to use :
 ```
 java -jar McScanKt-1.0.0.jar --help
 ```
 
 Arguments :
 ```
---world ./path/to/world : Analyze Minecraft map
---region ./path/to/region.mca : Analyze one region file
---player ./path/to/player.dat : Analyze one player file
+--worldFolder or -w ./path/to/world : Analyze Minecraft map
+--regionFile or -r ./path/to/region.mca : Analyze one region file
+--playerData or -p ./path/to/player.dat : Analyze one player file
 ```
 
 ## Community Discord
