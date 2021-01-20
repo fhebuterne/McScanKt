@@ -22,7 +22,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
     implementation("br.com.gamemods:region-manipulator:2.0.0")
     implementation("br.com.gamemods:nbt-manipulator:2.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.1")
     implementation("org.kodein.di:kodein-di:7.2.0")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.4")
     implementation("org.slf4j:slf4j-api:1.7.30")
