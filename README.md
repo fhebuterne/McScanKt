@@ -53,6 +53,6 @@ Arguments :
 
 Discord : https://discord.gg/gWe5u3A
 
-## Licence
+## License
 
 [GPLv3](LICENSE)
