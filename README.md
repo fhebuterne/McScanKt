@@ -37,6 +37,18 @@ Arguments :
 --playerData or -p ./path/to/player.dat : Analyze one player file
 ```
 
+## Supported Minecraft versions
+
+| MC Version     | Supported    |
+|----------------|--------------|
+| 1.16.5         |✅            |
+| 1.15.2         |✅            |
+| 1.14.4         |✅            |
+| 1.13.2         |✅            |
+| <= 1.12.2      |❌            |
+
+⚠ **1.12.2 and lower versions are not yet tested but may work !** ⚠
+
 ## Community Discord
 
 Discord : https://discord.gg/gWe5u3A
