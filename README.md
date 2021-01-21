@@ -1,5 +1,10 @@
 # McScanKt
 
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/fhebuterne/McScanKt/McScanKt%20CI%20-%20Java%2011%20with%20Kotlin/master?style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/fhebuterne/McScanKt?style=flat-square)
+![Lines of code](https://img.shields.io/tokei/lines/github/fhebuterne/McScanKt?style=flat-square)
+[![GitHub license](https://img.shields.io/github/license/fhebuterne/McScanKt?style=flat-square)](https://github.com/fhebuterne/McScanKt/blob/master/LICENSE)
+
 McScanKt is a software for analyzing a minecraft map and to show items with a changed name and / or a description to do a ranking
 
 This is a refactoring with better external nbt library from my old java project : https://github.com/fhebuterne/mc-scan
