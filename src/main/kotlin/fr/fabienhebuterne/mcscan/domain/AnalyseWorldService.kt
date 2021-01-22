@@ -38,7 +38,7 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
 
         val readRegion = RegionIO.readRegion(regionFile)
         readRegion.values.forEach {
-            logger.info { "analyze chunk x:${it.position.xPos} z:${it.position.zPos} ..." }
+            logger.debug { "analyze chunk x:${it.position.xPos} z:${it.position.zPos} ..." }
             analyseChunk(it)
         }
     }

@@ -40,6 +40,13 @@ fun main(args: Array<String>) {
     playerData?.let {
 
     }
+
+    // TODO : Add export option with better output in file / database etc...
+    // This is just for debug now
+    val countItemService: CountItemService by kodein.instance()
+    countItemService.getCounter().forEach { entry ->
+        println(entry.key.toString() + " : " + entry.value)
+    }
 }
 
 fun initKodein() {
