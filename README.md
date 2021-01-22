@@ -42,9 +42,9 @@ Arguments :
 | MC Version     | Supported    |
 |----------------|--------------|
 | 1.16.5         |✅            |
-| 1.15.2         |✅            |
-| 1.14.4         |✅            |
-| 1.13.2         |✅            |
+| 1.15.2         |⚠ (WIP)       |
+| 1.14.4         |⚠ (WIP)       |
+| 1.13.2         |⚠ (WIP)       |
 | <= 1.12.2      |❌            |
 
 ⚠ **1.12.2 and lower versions are not yet tested but may work !** ⚠
