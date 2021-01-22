@@ -1,11 +1,13 @@
 package fr.fabienhebuterne.mcscan.domain
 
 import br.com.gamemods.nbtmanipulator.NbtCompound
+import br.com.gamemods.nbtmanipulator.NbtIO
 import br.com.gamemods.nbtmanipulator.NbtList
 import br.com.gamemods.regionmanipulator.Chunk
 import br.com.gamemods.regionmanipulator.RegionIO
 import mu.KotlinLogging
 import java.io.File
+import java.util.regex.Pattern
 
 private val logger = KotlinLogging.logger {}
 
@@ -23,15 +25,25 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
         // TODO : add async
         // TODO : add progress counter
         regionFolder
-            .listFiles { _, name -> name.contains(".mca") }
+            .listFiles { _, name -> name.endsWith(".mca") }
             ?.forEach { file ->
                 logger.info { "analyze region ${file.name} from ${folder.name} world..." }
                 analyseRegion(file)
             }
+
+        val playerDataFolder = File(folder.absolutePath + File.separator + "playerdata")
+
+        playerDataFolder
+            .listFiles { _, name -> name.endsWith(".dat") }
+            ?.forEach { file ->
+                logger.info { "analyze playerData ${file.name} from ${folder.name} world..." }
+                analysePlayerData(file)
+            }
+
     }
 
     fun analyseRegion(regionFile: File) {
-        if (!regionFile.name.contains(".mca")) {
+        if (regionFile.extension != "mca") {
             logger.warn { "can't analyze ${regionFile.name} because not have .mca extension" }
             return
         }
@@ -48,8 +60,23 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
         countItemService.countTileEntities(tileEntities)
     }
 
-    fun analysePlayerData() {
-        // TODO : Analyze player data .dat
+    fun analysePlayerData(playerData: File) {
+        if (playerData.extension != "dat") {
+            logger.warn { "can't analyze ${playerData.name} because not have .dat extension" }
+            return
+        }
+
+        val patternUuid = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+        val uuid = playerData.nameWithoutExtension
+
+        if (!patternUuid.matcher(uuid).find()) {
+            logger.warn { "$uuid is a file with bad uuid format, skipped" }
+            return
+        }
+
+        val readPlayerData = NbtIO.readNbtFile(playerData)
+
+        countItemService.countItemsFromPlayerData(uuid, readPlayerData.compound)
     }
 
 }

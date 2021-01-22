@@ -44,6 +44,11 @@ class CountItemService {
             }
     }
 
+    fun countItemsFromPlayerData(uuid: String, nbtCompound: NbtCompound) {
+        this.countItems(nbtCompound, null, uuid, "Inventory")
+        this.countItems(nbtCompound, null, uuid, "EnderItems")
+    }
+
     // TODO : Only for 1.16.5 now -> need to do an Interface with DataVersion -> Enchantments tag not same in older version
     private fun countItems(
         specificTag: NbtCompound,
@@ -79,12 +84,7 @@ class CountItemService {
                 val name: String = nbtCompoundTag.getCompound("display").getString("Name")
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
-                    nbtCompoundTag.getCompoundList("Enchantments").map { nbtCompound ->
-                        ItemEnchantment(
-                            nbtCompound.getString("id"),
-                            nbtCompound.getInt("lvl")
-                        )
-                    }
+                    nbtCompoundTag.getCompoundList("Enchantments").map { it.toItemEnchantment() }
                 } else {
                     listOf()
                 }
@@ -136,6 +136,19 @@ class CountItemService {
                     counter.putIfAbsent(item, 1)
                 }
             }
+    }
+
+    fun NbtCompound.toItemEnchantment(): ItemEnchantment {
+        val level = try {
+            this.getInt("lvl")
+        } catch (e: ClassCastException) {
+            this.getShort("lvl").toInt()
+        }
+
+        return ItemEnchantment(
+            this.getString("id"),
+            level
+        )
     }
 
 }
