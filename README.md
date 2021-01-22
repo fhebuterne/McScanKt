@@ -37,10 +37,50 @@ Arguments :
 --playerData or -p ./path/to/player.dat : Analyze one player file
 ```
 
+## Analyzed elements
+
+<table>
+    <thead>
+    <tr>
+        <th>Type</th>
+        <th>Elements</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>World</td>
+        <td>
+          - All regions files
+          <br/>- All players data
+        </td>
+    </tr>
+    <tr>
+        <td>Region file</td>
+        <td>
+          - All chunks
+        </td>
+    </tr>
+    <tr>
+        <td>Chunk</td>
+        <td>
+          - All TileEntities
+          <br/>- Entities contains Items (minecart hooper etc...) -> ⚠ WIP ⚠
+        </td>
+    </tr>
+    <tr>
+        <td>Player data</td>
+        <td>
+          - Inventory
+          <br/>- Enderchest
+        </td>
+    </tr>
+</table>
+
+
 ## Supported Minecraft versions
 
 | MC Version     | Supported    |
-|----------------|--------------|
+|:----------------:|:--------------:|
 | 1.16.5         |✅            |
 | 1.15.2         |⚠ (WIP)       |
 | 1.14.4         |⚠ (WIP)       |
