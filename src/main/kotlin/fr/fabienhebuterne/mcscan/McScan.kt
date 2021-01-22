@@ -28,17 +28,15 @@ fun main(args: Array<String>) {
     val analyseWorldService: AnalyseWorldService by kodein.instance()
 
     worldFolder?.let {
-        val folder = File(it)
-        analyseWorldService.analyseWorld(folder)
+        analyseWorldService.analyseWorld(File(it))
     }
 
     regionFile?.let {
-        val region = File(it)
-        analyseWorldService.analyseRegion(region)
+        analyseWorldService.analyseRegion(File(it))
     }
 
     playerData?.let {
-
+        analyseWorldService.analysePlayerData(File(it))
     }
 
     // TODO : Add export option with better output in file / database etc...

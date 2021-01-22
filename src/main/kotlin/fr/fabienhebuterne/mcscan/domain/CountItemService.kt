@@ -101,35 +101,16 @@ class CountItemService {
                 }
 
                 if (name.isNotEmpty() || lore.isNotEmpty()) {
-                    val item = Item(
-                        id,
-                        name,
-                        lore,
-                        enchantments
-                    )
+                    val item = Item(id, name, lore, enchantments)
 
                     if (!counter.containsKey(item)) {
-                        location?.let {
-                            item.locations.putIfAbsent(it, 1)
-                        }
-
-                        uuid?.let {
-                            item.uuidInventories.putIfAbsent(it, 1)
-                        }
+                        initLocationOrUuid(item, location, uuid)
                     }
 
                     counter.keys
                         .filter { it == item }
                         .forEach { currentItem ->
-                            location?.let {
-                                currentItem.locations.computeIfPresent(it) { _, integer -> integer + 1 }
-                                currentItem.locations.putIfAbsent(it, 1)
-                            }
-
-                            uuid?.let {
-                                currentItem.uuidInventories.computeIfPresent(it) { _, integer -> integer + 1 }
-                                currentItem.uuidInventories.putIfAbsent(it, 1)
-                            }
+                            computeLocationOrUuid(currentItem, location, uuid)
                         }
 
                     counter.computeIfPresent(item) { _, integer -> integer + 1 }
@@ -138,7 +119,37 @@ class CountItemService {
             }
     }
 
-    fun NbtCompound.toItemEnchantment(): ItemEnchantment {
+    private fun initLocationOrUuid(
+        item: Item,
+        location: ItemLocation?,
+        uuid: String?
+    ) {
+        location?.let {
+            item.locations.putIfAbsent(it, 1)
+        }
+
+        uuid?.let {
+            item.uuidInventories.putIfAbsent(it, 1)
+        }
+    }
+
+    private fun computeLocationOrUuid(
+        item: Item,
+        location: ItemLocation?,
+        uuid: String?
+    ) {
+        location?.let {
+            item.locations.computeIfPresent(it) { _, integer -> integer + 1 }
+            item.locations.putIfAbsent(it, 1)
+        }
+
+        uuid?.let {
+            item.uuidInventories.computeIfPresent(it) { _, integer -> integer + 1 }
+            item.uuidInventories.putIfAbsent(it, 1)
+        }
+    }
+
+    private fun NbtCompound.toItemEnchantment(): ItemEnchantment {
         val level = try {
             this.getInt("lvl")
         } catch (e: ClassCastException) {
