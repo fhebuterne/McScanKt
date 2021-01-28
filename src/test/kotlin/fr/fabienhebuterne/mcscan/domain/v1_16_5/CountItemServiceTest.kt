@@ -19,15 +19,15 @@ internal class CountItemServiceTest: AbstractCountItemService("1.16.5") {
         // then
         val firstExceptedItem = Item(
             "minecraft:diamond_axe",
-            "[{\"text\":\"aaaa\",\"bold\":true}]",
+            "aaaa",
             listOf(),
             listOf(ItemEnchantment(id="minecraft:flame", level=2))
         )
 
         val secondExceptedItem = Item(
             "minecraft:diamond_axe",
-            "[{\"text\":\"test\",\"color\":\"red\",\"bold\":true},{\"text\":\"\",\"color\":\"red\",\"bold\":false}]",
-            listOf("[{\"text\":\"test lore ok\",\"bold\":true}]", "[{\"text\":\"aaa\",\"bold\":true,\"color\":\"green\"}]"),
+            "test",
+            listOf("test lore ok", "aaa"),
             listOf()
         )
 
@@ -47,7 +47,7 @@ internal class CountItemServiceTest: AbstractCountItemService("1.16.5") {
         // then
         val firstExceptedItem = Item(
             "minecraft:diamond_axe",
-            "[{\"text\":\"aaaa\",\"bold\":true}]",
+            "aaaa",
             listOf(),
             listOf(ItemEnchantment(id="minecraft:flame", level=2))
         )

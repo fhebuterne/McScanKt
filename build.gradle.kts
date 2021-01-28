@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.21-2"
+    kotlin("plugin.serialization") version "1.4.21-2"
     application
     java
 }
@@ -30,6 +31,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.4")
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
 }
 
 tasks.test {

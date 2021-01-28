@@ -2,6 +2,8 @@ package fr.fabienhebuterne.mcscan.domain
 
 import br.com.gamemods.nbtmanipulator.NbtCompound
 import br.com.gamemods.nbtmanipulator.NbtList
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.util.regex.Pattern
 
 class CountItemService {
@@ -80,8 +82,16 @@ class CountItemService {
                     )
                 }
 
+                val kotlinx = Json { isLenient = true }
+
                 val id: String = nbt.getString("id")
-                val name: String = nbtCompoundTag.getCompound("display").getString("Name")
+
+                // TODO : Add support for color
+                val name = if (nbtCompoundTag.getCompound("display").getString("Name").startsWith("[")) {
+                    kotlinx.decodeFromString<List<ItemName>>(nbtCompoundTag.getCompound("display").getString("Name"))[0].text
+                } else {
+                    kotlinx.decodeFromString<ItemName>(nbtCompoundTag.getCompound("display").getString("Name")).text
+                }
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
                     nbtCompoundTag.getCompoundList("Enchantments").map { it.toItemEnchantment() }
@@ -89,8 +99,17 @@ class CountItemService {
                     listOf()
                 }
 
+                // TODO : Add support for color
                 val lore: List<String> = if (nbtCompoundTag.getCompound("display").containsKey("Lore")) {
-                    nbtCompoundTag.getCompound("display").getStringList("Lore").map { it.value }
+                    nbtCompoundTag.getCompound("display").getStringList("Lore").flatMap { nbtString ->
+                        if (nbtString.value.startsWith("[")) {
+                            kotlinx.decodeFromString<List<ItemLore>>(nbtString.value)
+                                .filter { it.text.isNotEmpty() }
+                                .map { it.text }
+                        } else {
+                            listOf(kotlinx.decodeFromString<ItemLore>(nbtString.value).text)
+                        }
+                    }
                 } else {
                     listOf()
                 }
