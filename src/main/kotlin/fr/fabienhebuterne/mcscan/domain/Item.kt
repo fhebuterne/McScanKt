@@ -46,9 +46,15 @@ data class ItemLocation(
 
 @Serializable
 data class ItemName(
-    val text: String,
+    val text: String = "",
     val color: String? = null,
-    val bold: String? = null
+    val bold: String? = null,
+    val italic: Boolean? = null,
+    val underlined: Boolean? = null,
+    val strikethrough: Boolean? = null,
+    val obfuscated: Boolean? = null,
+    val translate: String? = null,
+    val extra: List<ItemName> = listOf()
 )
 
 @Serializable
@@ -56,5 +62,9 @@ data class ItemLore(
     val text: String,
     val color: String? = null,
     val bold: Boolean? = null,
+    val italic: Boolean? = null,
+    val underlined: Boolean? = null,
+    val strikethrough: Boolean? = null,
+    val obfuscated: Boolean? = null,
     val extra: List<ItemLore> = listOf()
 )

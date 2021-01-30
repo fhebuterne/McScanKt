@@ -1,6 +1,8 @@
 package fr.fabienhebuterne.mcscan.domain
 
 import br.com.gamemods.nbtmanipulator.NbtCompound
+import br.com.gamemods.nbtmanipulator.NbtDouble
+import br.com.gamemods.nbtmanipulator.NbtInt
 import br.com.gamemods.nbtmanipulator.NbtList
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -58,7 +60,7 @@ class CountItemService {
         uuid: String?,
         baseTag: String
     ) {
-        val items: List<NbtCompound> = specificTag.getCompoundList(baseTag).toList()
+        val items: List<NbtCompound> = specificTag.getNullableCompoundList(baseTag)?.toList() ?: listOf()
 
         // Items have only a display or a lore has been computed
         // TODO : Add config boolean to choose only items have display / lore OR all items
@@ -87,11 +89,7 @@ class CountItemService {
                 val id: String = nbt.getString("id")
 
                 // TODO : Add support for color
-                val name = if (nbtCompoundTag.getCompound("display").getString("Name").startsWith("[")) {
-                    kotlinx.decodeFromString<List<ItemName>>(nbtCompoundTag.getCompound("display").getString("Name"))[0].text
-                } else {
-                    kotlinx.decodeFromString<ItemName>(nbtCompoundTag.getCompound("display").getString("Name")).text
-                }
+                val name = getItemName(nbtCompoundTag, kotlinx)
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
                     nbtCompoundTag.getCompoundList("Enchantments").map { it.toItemEnchantment() }
@@ -138,6 +136,23 @@ class CountItemService {
             }
     }
 
+    private fun getItemName(
+        nbtCompoundTag: NbtCompound,
+        kotlinx: Json
+    ) = when {
+        nbtCompoundTag.getCompound("display")["Name"] == null -> {
+            ""
+        }
+        nbtCompoundTag.getCompound("display").getString("Name").startsWith("[") -> {
+            kotlinx.decodeFromString<List<ItemName>>(
+                nbtCompoundTag.getCompound("display").getString("Name")
+            )[0].text
+        }
+        else -> {
+            kotlinx.decodeFromString<ItemName>(nbtCompoundTag.getCompound("display").getString("Name")).text
+        }
+    }
+
     private fun initLocationOrUuid(
         item: Item,
         location: ItemLocation?,
@@ -169,10 +184,16 @@ class CountItemService {
     }
 
     private fun NbtCompound.toItemEnchantment(): ItemEnchantment {
-        val level = try {
-            this.getInt("lvl")
-        } catch (e: ClassCastException) {
-            this.getShort("lvl").toInt()
+        val level = when {
+            this["lvl"] is NbtInt -> {
+                this.getInt("lvl")
+            }
+            this["lvl"] is NbtDouble -> {
+                this.getDouble("lvl").toInt()
+            }
+            else -> {
+                this.getShort("lvl").toInt()
+            }
         }
 
         return ItemEnchantment(
