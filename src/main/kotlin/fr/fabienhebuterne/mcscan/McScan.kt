@@ -14,7 +14,7 @@ import java.io.File
 private val logger = KotlinLogging.logger {}
 lateinit var kodein: DI
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) {
     initKodein()
 
     val parser = ArgParser("mcscan")
@@ -42,6 +42,9 @@ fun main(args: Array<String>) {
     // TODO : Add export option with better output in file / database etc...
     // This is just for debug now
     val countItemService: CountItemService by kodein.instance()
+
+    println(countItemService.getCounter().size)
+
     countItemService.getCounter().forEach { entry ->
         println(entry.key.toString() + " : " + entry.value)
     }

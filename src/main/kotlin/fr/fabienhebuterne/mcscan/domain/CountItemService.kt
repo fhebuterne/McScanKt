@@ -89,7 +89,7 @@ class CountItemService {
                 val id: String = nbt.getString("id")
 
                 // TODO : Add support for color
-                val name = getItemName(nbtCompoundTag, kotlinx)
+                val name: String = getItemName(nbtCompoundTag, kotlinx)
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
                     nbtCompoundTag.getCompoundList("Enchantments").map { it.toItemEnchantment() }
@@ -100,12 +100,18 @@ class CountItemService {
                 // TODO : Add support for color
                 val lore: List<String> = if (nbtCompoundTag.getCompound("display").containsKey("Lore")) {
                     nbtCompoundTag.getCompound("display").getStringList("Lore").flatMap { nbtString ->
-                        if (nbtString.value.startsWith("[")) {
-                            kotlinx.decodeFromString<List<ItemLore>>(nbtString.value)
-                                .filter { it.text.isNotEmpty() }
-                                .map { it.text }
-                        } else {
-                            listOf(kotlinx.decodeFromString<ItemLore>(nbtString.value).text)
+                        when {
+                            nbtString.value.startsWith("[{") -> {
+                                kotlinx.decodeFromString<List<ItemLore>>(nbtString.value)
+                                    .filter { it.text.isNotEmpty() }
+                                    .map { it.text }
+                            }
+                            nbtString.value.startsWith("{") -> {
+                                listOf(kotlinx.decodeFromString<ItemLore>(nbtString.value).text)
+                            }
+                            else -> {
+                                listOf(nbtString.value)
+                            }
                         }
                     }
                 } else {
@@ -124,17 +130,27 @@ class CountItemService {
                         initLocationOrUuid(item, location, uuid)
                     }
 
-                    counter.keys
-                        .filter { it == item }
-                        .forEach { currentItem ->
-                            computeLocationOrUuid(currentItem, location, uuid)
-                        }
-
-                    counter.computeIfPresent(item) { _, integer -> integer + 1 }
-                    counter.putIfAbsent(item, 1)
+                    updateCounter(item, location, uuid)
                 }
             }
     }
+
+    @Synchronized
+    private fun updateCounter(
+        item: Item,
+        location: ItemLocation?,
+        uuid: String?
+    ) {
+        counter.keys
+            .filter { it == item }
+            .forEach { currentItem ->
+                computeLocationOrUuid(currentItem, location, uuid)
+            }
+
+        counter.computeIfPresent(item) { _, integer -> integer + 1 }
+        counter.putIfAbsent(item, 1)
+    }
+
 
     private fun getItemName(
         nbtCompoundTag: NbtCompound,
@@ -143,13 +159,16 @@ class CountItemService {
         nbtCompoundTag.getCompound("display")["Name"] == null -> {
             ""
         }
-        nbtCompoundTag.getCompound("display").getString("Name").startsWith("[") -> {
+        nbtCompoundTag.getCompound("display").getString("Name").startsWith("[{") -> {
             kotlinx.decodeFromString<List<ItemName>>(
                 nbtCompoundTag.getCompound("display").getString("Name")
             )[0].text
         }
-        else -> {
+        nbtCompoundTag.getCompound("display").getString("Name").startsWith("{") -> {
             kotlinx.decodeFromString<ItemName>(nbtCompoundTag.getCompound("display").getString("Name")).text
+        }
+        else -> {
+            nbtCompoundTag.getCompound("display").getString("Name")
         }
     }
 

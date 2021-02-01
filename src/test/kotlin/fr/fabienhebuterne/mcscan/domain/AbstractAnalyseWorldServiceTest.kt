@@ -29,7 +29,7 @@ internal abstract class AbstractAnalyseWorldServiceTest(private val version: Str
         file.deleteRecursively()
     }
 
-    fun `should analyze world`() {
+    suspend fun `should analyze world`() {
         // given
         val world = File("src/test/resources/$version/world")
         every { countItemServiceMock.countTileEntities(any()) } just Runs

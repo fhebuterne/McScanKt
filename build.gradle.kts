@@ -30,8 +30,10 @@ dependencies {
     implementation("org.kodein.di:kodein-di:7.2.0")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.4")
     implementation("org.slf4j:slf4j-api:1.7.30")
-    implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("ch.qos.logback:logback-core:1.2.3")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 }
 
 tasks.test {
