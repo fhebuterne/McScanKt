@@ -72,6 +72,9 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
         chunk.level.getNullableCompoundList("TileEntities")?.let {
             countItemService.countTileEntities(it)
         }
+        chunk.level.getNullableCompoundList("Entities")?.let {
+            countItemService.countEntities(it)
+        }
     }
 
     fun analysePlayerData(playerData: File, currentFolder: File? = null) {

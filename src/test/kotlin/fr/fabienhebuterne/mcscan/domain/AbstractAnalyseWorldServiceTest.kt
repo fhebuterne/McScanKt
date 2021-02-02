@@ -33,6 +33,7 @@ internal abstract class AbstractAnalyseWorldServiceTest(private val version: Str
         // given
         val world = File("src/test/resources/$version/world")
         every { countItemServiceMock.countTileEntities(any()) } just Runs
+        every { countItemServiceMock.countEntities(any()) } just Runs
         every { countItemServiceMock.countItemsFromPlayerData(any(), any()) } just Runs
 
         // when

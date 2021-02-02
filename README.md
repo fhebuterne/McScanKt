@@ -64,7 +64,7 @@ Arguments :
         <td>Chunk</td>
         <td>
           - All TileEntities
-          <br/>- Entities contains Items (itemframes etc...) -> ⚠ WIP ⚠
+          <br/>- Entities contains Items (itemframes etc...)
         </td>
     </tr>
     <tr>

@@ -48,6 +48,22 @@ class CountItemService {
             }
     }
 
+    fun countEntities(entities: NbtList<NbtCompound>) {
+        val patternContainers = Pattern.compile("^(minecraft:)?itemframe$|^(minecraft:)?item_frame$")
+
+        entities
+            .filter { nbtCompound -> patternContainers.matcher(nbtCompound.getString("id").toLowerCase()).find() }
+            .forEach { entity ->
+                val itemLocation = ItemLocation(
+                    entity.getInt("TileX"),
+                    entity.getInt("TileY"),
+                    entity.getInt("TileZ")
+                )
+
+                countItems(entity, itemLocation, null, "Item")
+            }
+    }
+
     fun countItemsFromPlayerData(uuid: String, nbtCompound: NbtCompound) {
         this.countItems(nbtCompound, null, uuid, "Inventory")
         this.countItems(nbtCompound, null, uuid, "EnderItems")
@@ -60,7 +76,11 @@ class CountItemService {
         uuid: String?,
         baseTag: String
     ) {
-        val items: List<NbtCompound> = specificTag.getNullableCompoundList(baseTag)?.toList() ?: listOf()
+        val items: List<NbtCompound> = if (baseTag == "Item") {
+            listOfNotNull(specificTag.getNullableCompound(baseTag))
+        } else {
+            specificTag.getNullableCompoundList(baseTag)?.toList() ?: listOf()
+        }
 
         // Items have only a display or a lore has been computed
         // TODO : Add config boolean to choose only items have display / lore OR all items
