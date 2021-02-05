@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test-junit5"))
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testImplementation("io.mockk:mockk:1.10.5")
     testImplementation("io.strikt:strikt-core:0.28.2")
     testImplementation("io.strikt:strikt-mockk:0.28.2")
