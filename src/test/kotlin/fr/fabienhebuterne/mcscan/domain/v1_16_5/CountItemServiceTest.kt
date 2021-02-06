@@ -1,8 +1,6 @@
 package fr.fabienhebuterne.mcscan.domain.v1_16_5
 
-import fr.fabienhebuterne.mcscan.domain.AbstractCountItemService
-import fr.fabienhebuterne.mcscan.domain.Item
-import fr.fabienhebuterne.mcscan.domain.ItemEnchantment
+import fr.fabienhebuterne.mcscan.domain.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import strikt.api.expect
@@ -10,7 +8,7 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class CountItemServiceTest: AbstractCountItemService("1.16.5") {
+internal class CountItemServiceTest : AbstractCountItemService("1.16.5") {
 
     @Test
     fun `should count tile entities on 1_16_5 from region 0 0 on one chunk`() {
@@ -19,15 +17,18 @@ internal class CountItemServiceTest: AbstractCountItemService("1.16.5") {
         // then
         val firstExceptedItem = Item(
             "minecraft:diamond_axe",
-            "aaaa",
+            ItemName("aaaa", bold = true),
             listOf(),
-            listOf(ItemEnchantment(id="minecraft:flame", level=2))
+            listOf(ItemEnchantment(id = "minecraft:flame", level = 2))
         )
 
         val secondExceptedItem = Item(
             "minecraft:diamond_axe",
-            "test",
-            listOf("test lore ok", "aaa"),
+            ItemName("test", "red", true),
+            listOf(
+                ItemLore("test lore ok", bold = true),
+                ItemLore("aaa", color = "green", bold = true)
+            ),
             listOf()
         )
 
@@ -47,10 +48,12 @@ internal class CountItemServiceTest: AbstractCountItemService("1.16.5") {
         // then
         val firstExceptedItem = Item(
             "minecraft:diamond_axe",
-            "aaaa",
+            ItemName(text = "aaaa", bold = true),
             listOf(),
-            listOf(ItemEnchantment(id="minecraft:flame", level=2))
+            listOf(ItemEnchantment(id = "minecraft:flame", level = 2))
         )
+
+        println(countItemService.getCounter())
 
         expectThat(countItemService.getCounter()[firstExceptedItem]).isEqualTo(3)
     }

@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 data class Item(
     val id: String,
-    val name: String,
-    val lores: List<String> = listOf(),
+    val name: ItemName,
+    val lores: List<ItemLore> = listOf(),
     val enchantments: List<ItemEnchantment> = listOf(),
     val locations: HashMap<ItemLocation, Int> = hashMapOf(),
     val uuidInventories: HashMap<String, Int> = hashMapOf()
@@ -48,11 +48,11 @@ data class ItemLocation(
 data class ItemName(
     val text: String = "",
     val color: String? = null,
-    val bold: String? = null,
-    val italic: Boolean? = null,
-    val underlined: Boolean? = null,
-    val strikethrough: Boolean? = null,
-    val obfuscated: Boolean? = null,
+    val bold: Boolean = false,
+    val italic: Boolean = false,
+    val underlined: Boolean = false,
+    val strikethrough: Boolean = false,
+    val obfuscated: Boolean = false,
     val translate: String? = null,
     val extra: List<ItemName> = listOf()
 )
@@ -61,10 +61,10 @@ data class ItemName(
 data class ItemLore(
     val text: String,
     val color: String? = null,
-    val bold: Boolean? = null,
-    val italic: Boolean? = null,
-    val underlined: Boolean? = null,
-    val strikethrough: Boolean? = null,
-    val obfuscated: Boolean? = null,
+    val bold: Boolean = false,
+    val italic: Boolean = false,
+    val underlined: Boolean = false,
+    val strikethrough: Boolean = false,
+    val obfuscated: Boolean = false,
     val extra: List<ItemLore> = listOf()
 )

@@ -104,12 +104,11 @@ class CountItemService {
                     )
                 }
 
-                val kotlinx = Json { isLenient = true }
+                val kotlinx = Json { isLenient = true; ignoreUnknownKeys = true }
 
                 val id: String = nbt.getString("id")
-
-                // TODO : Add support for color
-                val name: String = getItemName(nbtCompoundTag, kotlinx)
+                val name: ItemName = getItemName(nbtCompoundTag, kotlinx)
+                val lores: List<ItemLore> = getItemLore(nbtCompoundTag, kotlinx)
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
                     nbtCompoundTag.getCompoundList("Enchantments").map { it.toItemEnchantment() }
@@ -117,34 +116,13 @@ class CountItemService {
                     listOf()
                 }
 
-                // TODO : Add support for color
-                val lore: List<String> = if (nbtCompoundTag.getCompound("display").containsKey("Lore")) {
-                    nbtCompoundTag.getCompound("display").getStringList("Lore").flatMap { nbtString ->
-                        when {
-                            nbtString.value.startsWith("[{") -> {
-                                kotlinx.decodeFromString<List<ItemLore>>(nbtString.value)
-                                    .filter { it.text.isNotEmpty() }
-                                    .map { it.text }
-                            }
-                            nbtString.value.startsWith("{") -> {
-                                listOf(kotlinx.decodeFromString<ItemLore>(nbtString.value).text)
-                            }
-                            else -> {
-                                listOf(nbtString.value)
-                            }
-                        }
-                    }
-                } else {
-                    listOf()
-                }
-
                 // We ignore shulker_box item that considered like special item because have lore
-                if (id.contains("shulker_box") && lore.isEmpty()) {
+                if (id.contains("shulker_box") && lores.isEmpty()) {
                     return
                 }
 
-                if (name.isNotEmpty() || lore.isNotEmpty()) {
-                    val item = Item(id, name, lore, enchantments)
+                if (name.text.isNotEmpty() || name.extra.isNotEmpty() || lores.isNotEmpty()) {
+                    val item = Item(id, name, lores, enchantments)
 
                     if (!counter.containsKey(item)) {
                         initLocationOrUuid(item, location, uuid)
@@ -153,6 +131,53 @@ class CountItemService {
                     updateCounter(item, location, uuid)
                 }
             }
+    }
+
+    private fun getItemName(
+        nbtCompoundTag: NbtCompound,
+        kotlinx: Json
+    ): ItemName = when {
+        nbtCompoundTag.getCompound("display")["Name"] == null -> {
+            ItemName()
+        }
+        nbtCompoundTag.getCompound("display").getString("Name").startsWith("[{") -> {
+            kotlinx.decodeFromString<List<ItemName>>(
+                nbtCompoundTag.getCompound("display").getString("Name")
+            )[0]
+        }
+        nbtCompoundTag.getCompound("display").getString("Name").startsWith("{") -> {
+            try {
+                kotlinx.decodeFromString(nbtCompoundTag.getCompound("display").getString("Name"))
+            } catch (e: Exception) {
+                ItemName(nbtCompoundTag.getCompound("display").getString("Name"))
+            }
+        }
+        else -> {
+            ItemName(nbtCompoundTag.getCompound("display").getString("Name"))
+        }
+    }
+
+    private fun getItemLore(
+        nbtCompoundTag: NbtCompound,
+        kotlinx: Json
+    ): List<ItemLore> {
+        return if (nbtCompoundTag.getCompound("display").containsKey("Lore")) {
+            nbtCompoundTag.getCompound("display").getStringList("Lore").flatMap { nbtString ->
+                when {
+                    nbtString.value.startsWith("[{") -> {
+                        kotlinx.decodeFromString<List<ItemLore>>(nbtString.value)
+                    }
+                    nbtString.value.startsWith("{") -> {
+                        listOf(kotlinx.decodeFromString<ItemLore>(nbtString.value))
+                    }
+                    else -> {
+                        listOf(ItemLore(nbtString.value))
+                    }
+                }
+            }
+        } else {
+            listOf()
+        }
     }
 
     @Synchronized
@@ -169,27 +194,6 @@ class CountItemService {
 
         counter.computeIfPresent(item) { _, integer -> integer + 1 }
         counter.putIfAbsent(item, 1)
-    }
-
-
-    private fun getItemName(
-        nbtCompoundTag: NbtCompound,
-        kotlinx: Json
-    ) = when {
-        nbtCompoundTag.getCompound("display")["Name"] == null -> {
-            ""
-        }
-        nbtCompoundTag.getCompound("display").getString("Name").startsWith("[{") -> {
-            kotlinx.decodeFromString<List<ItemName>>(
-                nbtCompoundTag.getCompound("display").getString("Name")
-            )[0].text
-        }
-        nbtCompoundTag.getCompound("display").getString("Name").startsWith("{") -> {
-            kotlinx.decodeFromString<ItemName>(nbtCompoundTag.getCompound("display").getString("Name")).text
-        }
-        else -> {
-            nbtCompoundTag.getCompound("display").getString("Name")
-        }
     }
 
     private fun initLocationOrUuid(

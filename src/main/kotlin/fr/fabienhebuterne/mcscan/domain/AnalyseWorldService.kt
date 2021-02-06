@@ -16,6 +16,21 @@ private val logger = KotlinLogging.logger {}
 
 class AnalyseWorldService(private val countItemService: CountItemService) {
 
+    private var regionComputed = 1
+    private var playerDataComputed = 1
+
+    @Synchronized
+    fun incrementRegion(regionFile: File, currentFolder: File? = null, count: Int) {
+        logger.info { "analyze region ${regionFile.name} from ${currentFolder?.name ?: "unknown"} world... - $regionComputed/$count analyzed" }
+        regionComputed++
+    }
+
+    @Synchronized
+    fun incrementPlayerData(playerData: File, currentFolder: File? = null, count: Int) {
+        logger.info { "analyze playerData ${playerData.name} from ${currentFolder?.name ?: "unknown"} world... - $playerDataComputed/$count analyzed" }
+        playerDataComputed++
+    }
+
     suspend fun analyseWorld(folder: File) {
         if (!folder.isDirectory || !folder.exists()) {
             throw IllegalAccessException("world path isn't directory or doesn't exist")
@@ -31,38 +46,36 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
 
         coroutineScope {
             // TODO : add progress counter
-            regionFolder
-                .listFiles { _, name -> name.endsWith(".mca") }
+            val regions = regionFolder.listFiles { _, name -> name.endsWith(".mca") }
+            val regionTotal = regions?.count() ?: 0
+            regions
                 ?.forEach { file ->
                     launch(asCoroutineDispatcher) {
-                        analyseRegion(file, folder)
+                        analyseRegion(file, folder, regionTotal)
                     }
                 }
 
             val playerDataFolder = File(folder.absolutePath + File.separator + "playerdata")
-
-            playerDataFolder
-                .listFiles { _, name -> name.endsWith(".dat") }
-                ?.forEach { file ->
-                    launch(asCoroutineDispatcher) {
-                        analysePlayerData(file, folder)
-                    }
+            val playerDatas = playerDataFolder.listFiles { _, name -> name.endsWith(".dat") }
+            val playerDataTotal = playerDatas?.count() ?: 0
+            playerDatas?.forEach { file ->
+                launch(asCoroutineDispatcher) {
+                    analysePlayerData(file, folder, playerDataTotal)
                 }
+            }
         }
 
         fixedThreadPool.shutdown()
     }
 
-    fun analyseRegion(regionFile: File, currentFolder: File? = null) {
+    fun analyseRegion(regionFile: File, currentFolder: File? = null, count: Int = 1) {
         if (regionFile.extension != "mca") {
             logger.warn { "can't analyze ${regionFile.name} because not have .mca extension" }
             return
         }
 
-        logger.info { "analyze region ${regionFile.name} from ${currentFolder?.name ?: "unknown"} world..." }
-
-        val readRegion = RegionIO.readRegion(regionFile)
-        readRegion.values.forEach {
+        incrementRegion(regionFile, currentFolder, count)
+        RegionIO.readRegion(regionFile).values.forEach {
             logger.debug { "analyze chunk x:${it.position.xPos} z:${it.position.zPos} ..." }
             analyseChunk(it)
         }
@@ -77,7 +90,7 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
         }
     }
 
-    fun analysePlayerData(playerData: File, currentFolder: File? = null) {
+    fun analysePlayerData(playerData: File, currentFolder: File? = null, count: Int = 1) {
         if (playerData.extension != "dat") {
             logger.warn { "can't analyze ${playerData.name} because not have .dat extension" }
             return
@@ -91,11 +104,8 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
             return
         }
 
-        logger.info { "analyze playerData ${playerData.name} from ${currentFolder?.name ?: "unknown"} world..." }
-
-        val readPlayerData = NbtIO.readNbtFile(playerData)
-
-        countItemService.countItemsFromPlayerData(uuid, readPlayerData.compound)
+        incrementPlayerData(playerData, currentFolder, count)
+        countItemService.countItemsFromPlayerData(uuid, NbtIO.readNbtFile(playerData).compound)
     }
 
 }

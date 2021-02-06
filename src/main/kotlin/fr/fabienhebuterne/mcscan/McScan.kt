@@ -45,9 +45,13 @@ suspend fun main(args: Array<String>) {
 
     println(countItemService.getCounter().size)
 
-    countItemService.getCounter().forEach { entry ->
-        println(entry.key.toString() + " : " + entry.value)
-    }
+    countItemService.getCounter()
+        .toList()
+        .sortedBy { (_, value) -> value }
+        .toMap()
+        .forEach { entry ->
+            println(entry.key.toString() + " : " + entry.value)
+        }
 }
 
 fun initKodein() {
