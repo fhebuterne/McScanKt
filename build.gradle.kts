@@ -21,7 +21,7 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testImplementation("io.mockk:mockk:1.10.5")
-    testImplementation("io.strikt:strikt-core:0.28.2")
+    testImplementation("io.strikt:strikt-core:0.29.0")
     testImplementation("io.strikt:strikt-mockk:0.28.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
     implementation("br.com.gamemods:region-manipulator:2.0.0")
