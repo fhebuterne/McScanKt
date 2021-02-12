@@ -2,6 +2,7 @@ package fr.fabienhebuterne.mcscan
 
 import fr.fabienhebuterne.mcscan.domain.AnalyseWorldService
 import fr.fabienhebuterne.mcscan.domain.CountItemService
+import fr.fabienhebuterne.mcscan.storage.mongoModuleDi
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import mu.KotlinLogging
@@ -58,5 +59,6 @@ fun initKodein() {
     kodein = DI {
         bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance()) }
         bind<CountItemService>() with singleton { CountItemService() }
+        import(mongoModuleDi)
     }
 }
