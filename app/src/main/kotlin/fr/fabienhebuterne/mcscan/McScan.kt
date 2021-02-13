@@ -2,6 +2,7 @@ package fr.fabienhebuterne.mcscan
 
 import fr.fabienhebuterne.mcscan.domain.AnalyseWorldService
 import fr.fabienhebuterne.mcscan.domain.CountItemService
+import fr.fabienhebuterne.mcscan.domain.ItemService
 import fr.fabienhebuterne.mcscan.storage.mongoModuleDi
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
@@ -40,25 +41,16 @@ suspend fun main(args: Array<String>) {
         analyseWorldService.analysePlayerData(File(it))
     }
 
-    // TODO : Add export option with better output in file / database etc...
-    // This is just for debug now
-    val countItemService: CountItemService by kodein.instance()
+    val itemService: ItemService by kodein.instance()
 
-    println(countItemService.getCounter().size)
-
-    countItemService.getCounter()
-        .toList()
-        .sortedBy { (_, value) -> value }
-        .toMap()
-        .forEach { entry ->
-            println(entry.key.toString() + " : " + entry.value)
-        }
+    itemService.resetAndSave()
 }
 
 fun initKodein() {
     kodein = DI {
-        bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance()) }
         bind<CountItemService>() with singleton { CountItemService() }
+        bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance()) }
+        bind<ItemService>() with singleton { ItemService(instance(), instance()) }
         import(mongoModuleDi)
     }
 }

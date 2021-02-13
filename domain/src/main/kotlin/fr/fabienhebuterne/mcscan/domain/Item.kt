@@ -33,6 +33,15 @@ data class Item(
     }
 }
 
+fun Item.toItemStorage(): ItemStorage = ItemStorage(
+    id,
+    name,
+    lores,
+    enchantments,
+    locations.map { ItemLocationCounter(it.key, it.value) },
+    uuidInventories.map { ItemUuidInventoryCounter(it.key, it.value) }
+)
+
 data class ItemEnchantment(
     val id: String,
     val level: Int

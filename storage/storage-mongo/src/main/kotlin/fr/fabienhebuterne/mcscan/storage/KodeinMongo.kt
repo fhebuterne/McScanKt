@@ -11,5 +11,5 @@ val client: MongoClient = KMongo.createClient()
 val db: MongoDatabase = client.getDatabase("mcscan")
 
 val mongoModuleDi = DI.Module(name = "StorageMongo") {
-    bind<ItemRepository>() with singleton { ItemRepositoryMongo(db) }
+    bind<ItemCounterRepository>() with singleton { ItemCounterRepositoryMongo(db) }
 }
