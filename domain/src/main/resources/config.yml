@@ -1,0 +1,7 @@
+# Storage Type
+# Available values : NONE, MONGO
+storageType: "NONE"
+
+# Storage URL if storageType is not NONE (check documentation of the specified storage)
+# Example for mongo : storageUrl: "mongodb://localhost:27017/"
+storageUrl: ""
