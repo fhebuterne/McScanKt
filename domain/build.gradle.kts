@@ -22,6 +22,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.1")
 }
 
 tasks.test {

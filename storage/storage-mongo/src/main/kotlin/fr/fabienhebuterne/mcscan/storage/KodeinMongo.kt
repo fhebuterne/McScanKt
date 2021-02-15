@@ -7,9 +7,13 @@ import org.kodein.di.bind
 import org.kodein.di.singleton
 import org.litote.kmongo.KMongo
 
-val client: MongoClient = KMongo.createClient()
-val db: MongoDatabase = client.getDatabase("mcscan")
+class KodeinMongo(storageUrl: String) {
+    private val client: MongoClient = KMongo.createClient(storageUrl)
+    private val db: MongoDatabase = client.getDatabase("mcscan")
 
-val mongoModuleDi = DI.Module(name = "StorageMongo") {
-    bind<ItemCounterRepository>() with singleton { ItemCounterRepositoryMongo(db) }
+    val mongoModuleDi = DI.Module(name = "StorageMongo") {
+        bind<ItemCounterRepository>() with singleton { ItemCounterRepositoryMongo(db) }
+    }
 }
+
+

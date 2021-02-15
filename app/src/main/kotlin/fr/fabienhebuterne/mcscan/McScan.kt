@@ -1,9 +1,9 @@
 package fr.fabienhebuterne.mcscan
 
-import fr.fabienhebuterne.mcscan.domain.AnalyseWorldService
-import fr.fabienhebuterne.mcscan.domain.CountItemService
-import fr.fabienhebuterne.mcscan.domain.ItemService
-import fr.fabienhebuterne.mcscan.storage.mongoModuleDi
+import fr.fabienhebuterne.mcscan.domain.*
+import fr.fabienhebuterne.mcscan.storage.ItemCounterRepository
+import fr.fabienhebuterne.mcscan.storage.ItemCounterRepositoryNone
+import fr.fabienhebuterne.mcscan.storage.KodeinMongo
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import mu.KotlinLogging
@@ -27,6 +27,11 @@ suspend fun main(args: Array<String>) {
 
     logger.info { "Starting McScan..." }
 
+    val configService: ConfigService by kodein.instance()
+    configService.load()
+
+    initStorageWithKodein(configService)
+
     val analyseWorldService: AnalyseWorldService by kodein.instance()
 
     worldFolder?.let {
@@ -43,14 +48,45 @@ suspend fun main(args: Array<String>) {
 
     val itemService: ItemService by kodein.instance()
 
-    itemService.resetAndSave()
+    if (configService.config.storageType != StorageType.NONE) {
+        itemService.resetAndSave()
+    }
+
+    itemService.showItems()
 }
 
-fun initKodein() {
+private fun initStorageWithKodein(configService: ConfigService) {
+    kodein = when (configService.config.storageType) {
+        StorageType.MONGO -> {
+            logger.info { "mongo storage configured" }
+            val kodeinInit = DI {
+                extend(kodein)
+                bind<KodeinMongo>() with singleton { KodeinMongo(configService.config.storageUrl) }
+            }
+
+            val kodeinMongo: KodeinMongo by kodeinInit.instance()
+
+            DI {
+                extend(kodeinInit)
+                import(kodeinMongo.mongoModuleDi)
+                bind<ItemService>() with singleton { ItemService(instance(), instance()) }
+            }
+        }
+        StorageType.NONE -> {
+            logger.info { "no storage configured" }
+            DI {
+                extend(kodein)
+                bind<ItemCounterRepository>() with singleton { ItemCounterRepositoryNone() }
+                bind<ItemService>() with singleton { ItemService(instance(), instance()) }
+            }
+        }
+    }
+}
+
+private fun initKodein() {
     kodein = DI {
+        bind<ConfigService>() with singleton { ConfigService() }
         bind<CountItemService>() with singleton { CountItemService() }
         bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance()) }
-        bind<ItemService>() with singleton { ItemService(instance(), instance()) }
-        import(mongoModuleDi)
     }
 }
