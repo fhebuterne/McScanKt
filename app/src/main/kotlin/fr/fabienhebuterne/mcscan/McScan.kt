@@ -91,7 +91,7 @@ private fun initKodein() {
     kodein = DI {
         bind<ConfigService>() with singleton { ConfigService() }
         bind<CountItemService>() with singleton { CountItemService() }
-        bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance()) }
+        bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance(), instance()) }
         // TODO : Create external module to choose service
         bind<OutputService>() with singleton { OutputHtmlService(instance()) }
     }

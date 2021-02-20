@@ -14,7 +14,10 @@ import java.util.regex.Pattern
 
 private val logger = KotlinLogging.logger {}
 
-class AnalyseWorldService(private val countItemService: CountItemService) {
+class AnalyseWorldService(
+    private val countItemService: CountItemService,
+    private val configService: ConfigService
+) {
 
     private var regionComputed = 1
     private var playerDataComputed = 1
@@ -40,12 +43,22 @@ class AnalyseWorldService(private val countItemService: CountItemService) {
 
         val regionFolder = File(folder.absolutePath + File.separator + "region")
 
-        val maxThreads = Runtime.getRuntime().availableProcessors()
+        val maxThreads = when {
+            configService.config.maxThreads <= 0 -> {
+                Runtime.getRuntime().availableProcessors() - 2
+            }
+            configService.config.maxThreads > Runtime.getRuntime().availableProcessors() -> {
+                Runtime.getRuntime().availableProcessors() - 2
+            }
+            else -> {
+                configService.config.maxThreads
+            }
+        }
+
         val fixedThreadPool = Executors.newFixedThreadPool(maxThreads)
         val asCoroutineDispatcher: ExecutorCoroutineDispatcher = fixedThreadPool.asCoroutineDispatcher()
 
         coroutineScope {
-            // TODO : add progress counter
             val regions = regionFolder.listFiles { _, name -> name.endsWith(".mca") }
             val regionTotal = regions?.count() ?: 0
             regions
