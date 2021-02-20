@@ -109,9 +109,12 @@ class CountItemService {
                 val id: String = nbt.getString("id")
                 val name: ItemName = getItemName(nbtCompoundTag, kotlinx)
                 val lores: List<ItemLore> = getItemLore(nbtCompoundTag, kotlinx)
+                val count: Int = nbt.getByte("Count").toInt()
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
-                    nbtCompoundTag.getCompoundList("Enchantments").map { it.toItemEnchantment() }
+                    nbtCompoundTag.getCompoundList("Enchantments")
+                        .filter { it.getString("id") != "null" }
+                        .map { it.toItemEnchantment() }
                 } else {
                     listOf()
                 }
@@ -121,14 +124,14 @@ class CountItemService {
                     return
                 }
 
-                if (name.text.isNotEmpty() || name.extra.isNotEmpty() || lores.isNotEmpty()) {
+                if (name.getExtraBase().isNotEmpty() || lores.isNotEmpty()) {
                     val item = Item(id, name, lores, enchantments)
 
                     if (!counter.containsKey(item)) {
-                        initLocationOrUuid(item, location, uuid)
+                        initLocationOrUuid(item, location, uuid, count)
                     }
 
-                    updateCounter(item, location, uuid)
+                    updateCounter(item, location, uuid, count)
                 }
             }
     }
@@ -184,45 +187,48 @@ class CountItemService {
     private fun updateCounter(
         item: Item,
         location: ItemLocation?,
-        uuid: String?
+        uuid: String?,
+        count: Int
     ) {
         counter.keys
             .filter { it == item }
             .forEach { currentItem ->
-                computeLocationOrUuid(currentItem, location, uuid)
+                computeLocationOrUuid(currentItem, location, uuid, count)
             }
 
-        counter.computeIfPresent(item) { _, integer -> integer + 1 }
-        counter.putIfAbsent(item, 1)
+        counter.computeIfPresent(item) { _, integer -> integer + count }
+        counter.putIfAbsent(item, count)
     }
 
     private fun initLocationOrUuid(
         item: Item,
         location: ItemLocation?,
-        uuid: String?
+        uuid: String?,
+        count: Int
     ) {
         location?.let {
-            item.locations.putIfAbsent(it, 1)
+            item.locations.putIfAbsent(it, count)
         }
 
         uuid?.let {
-            item.uuidInventories.putIfAbsent(it, 1)
+            item.uuidInventories.putIfAbsent(it, count)
         }
     }
 
     private fun computeLocationOrUuid(
         item: Item,
         location: ItemLocation?,
-        uuid: String?
+        uuid: String?,
+        count: Int
     ) {
         location?.let {
-            item.locations.computeIfPresent(it) { _, integer -> integer + 1 }
-            item.locations.putIfAbsent(it, 1)
+            item.locations.computeIfPresent(it) { _, integer -> integer + count }
+            item.locations.putIfAbsent(it, count)
         }
 
         uuid?.let {
-            item.uuidInventories.computeIfPresent(it) { _, integer -> integer + 1 }
-            item.uuidInventories.putIfAbsent(it, 1)
+            item.uuidInventories.computeIfPresent(it) { _, integer -> integer + count }
+            item.uuidInventories.putIfAbsent(it, count)
         }
     }
 
