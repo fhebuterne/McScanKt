@@ -14,7 +14,8 @@ import java.io.File
 internal abstract class AbstractAnalyseWorldServiceTest(private val version: String) {
 
     protected val countItemServiceMock = mockk<CountItemService>()
-    protected val analyseWorldService = AnalyseWorldService(countItemServiceMock)
+    private val configServiceMock = mockk<ConfigService>()
+    private val analyseWorldService = AnalyseWorldService(countItemServiceMock, configServiceMock)
 
     @BeforeAll
     fun start() {
@@ -35,6 +36,7 @@ internal abstract class AbstractAnalyseWorldServiceTest(private val version: Str
         every { countItemServiceMock.countTileEntities(any()) } just Runs
         every { countItemServiceMock.countEntities(any()) } just Runs
         every { countItemServiceMock.countItemsFromPlayerData(any(), any()) } just Runs
+        every { configServiceMock.config } returns Config()
 
         // when
         analyseWorldService.analyseWorld(world)
