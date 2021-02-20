@@ -45,10 +45,10 @@ class AnalyseWorldService(
 
         val maxThreads = when {
             configService.config.maxThreads <= 0 -> {
-                Runtime.getRuntime().availableProcessors() - 2
+                getAvailableProcessor()
             }
             configService.config.maxThreads > Runtime.getRuntime().availableProcessors() -> {
-                Runtime.getRuntime().availableProcessors() - 2
+                getAvailableProcessor()
             }
             else -> {
                 configService.config.maxThreads

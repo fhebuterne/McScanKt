@@ -7,6 +7,6 @@ storageType: "NONE"
 storageUrl: ""
 
 # Used for multithreading
-# -1 = Use all threads from your computer - 2 (by default we remove 2 threads to not overload computer)
+# -1 = Use all threads from your computer - 1 (by default we remove 1 thread to not overload computer)
 # /!\ You can put the max value if your want but this will use all available resource /!\
 maxThreads: -1
