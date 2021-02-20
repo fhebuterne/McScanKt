@@ -2,29 +2,33 @@ package fr.fabienhebuterne.mcscan.domain.output
 
 import fr.fabienhebuterne.mcscan.domain.CountItemService
 import fr.fabienhebuterne.mcscan.domain.Item
+import mu.KotlinLogging
 import java.io.File
 import java.io.InputStream
 
+private val logger = KotlinLogging.logger {}
+
 class OutputHtmlService(private val countItemService: CountItemService) : OutputService {
     override fun showResults() {
-        val divList: List<DIV> = countItemService.getCounter()
-            .toList()
-            .sortedByDescending { (_, value) -> value }
-            .toMap()
-            .map { entry ->
-                parseItemToHtml(entry.key, entry.value)
-            }
-
-        val reduce: String = divList.map { it.toString() }.reduce { acc, s -> acc + s }
+        logger.info { "start parsing item into html" }
 
         val inputStream: InputStream = javaClass.classLoader?.getResource("template.html")?.openStream()
             ?: throw IllegalAccessException("template html not found")
-
         val template = File("./template.html")
         template.writeBytes(inputStream.readAllBytes())
-        val readText = template.readText()
-        val replace = readText.replace("{{pattern}}", reduce)
-        template.writeText(replace)
+
+        // TODO : Split into pages when have too many item in one page
+        countItemService.getCounter()
+            .toList()
+            .sortedByDescending { (_, value) -> value }
+            .forEach { (item, count) ->
+                logger.info { "parsing current item into html and writing to file ..." }
+
+                val parseItemToHtml = parseItemToHtml(item, count)
+                template.appendText(parseItemToHtml.toString())
+            }
+
+        template.appendText("</body>")
     }
 
     private fun parseItemToHtml(item: Item, count: Int): DIV {
