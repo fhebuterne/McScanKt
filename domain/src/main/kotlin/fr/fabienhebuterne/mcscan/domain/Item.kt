@@ -83,15 +83,17 @@ abstract class ItemBase {
         div: DIV,
         text: String
     ) {
-        if (itemBase.color != null) {
-            val minecraftColor = MinecraftColor.valueOf(itemBase.color?.toUpperCase() ?: "")
-            div.span("color: ${minecraftColor.hexCode};") {
+        itemBase.color?.let {
+            val minecraftColor = if (!it.contains("#")) {
+                MinecraftColor.valueOf(it.toUpperCase()).hexCode
+            } else {
+                it
+            }
+            div.span("color: ${minecraftColor};") {
                 +text
             }
-        } else {
-            div.span {
-                +text
-            }
+        } ?: div.span {
+            +text
         }
     }
 }
