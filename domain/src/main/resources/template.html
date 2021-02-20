@@ -1,0 +1,61 @@
+<html>
+<title>McScanKt results</title>
+<style>
+    html {
+        font-family: minecraft, sans-serif;
+    }
+
+    body {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-content: center;
+        align-items: flex-start;
+    }
+
+    .item {
+        width: 550px;
+        padding: 10px;
+        background-color: rgba(16, 1, 16, 0.8);
+        border: 4px solid #250553;
+        border-radius: 2px;
+        margin: 15px;
+        box-shadow: 0 0 0 1px #100110;
+        white-space: initial;
+        overflow: auto;
+        flex: 0 1 auto;
+        align-self: auto;
+        display: flex;
+    }
+
+    .item-column-first {
+        flex: 70%;
+    }
+
+    .item-column-second {
+        flex: 30%;
+    }
+
+    .item-count-center:before {
+        content: "Total :";
+    }
+
+    .item-count-center {
+        align-self: center;
+        text-align: center;
+    }
+
+    .id {
+        color: #555555;
+    }
+
+    @font-face {
+        font-family: 'minecraft';
+        src: url('./minecraftia-regular.ttf');
+    }
+</style>
+<body>
+{{pattern}}
+</body>
+</html>

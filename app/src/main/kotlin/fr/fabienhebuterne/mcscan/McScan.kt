@@ -1,6 +1,8 @@
 package fr.fabienhebuterne.mcscan
 
 import fr.fabienhebuterne.mcscan.domain.*
+import fr.fabienhebuterne.mcscan.domain.output.OutputHtmlService
+import fr.fabienhebuterne.mcscan.domain.output.OutputService
 import fr.fabienhebuterne.mcscan.storage.ItemCounterRepository
 import fr.fabienhebuterne.mcscan.storage.ItemCounterRepositoryNone
 import fr.fabienhebuterne.mcscan.storage.KodeinMongo
@@ -52,7 +54,9 @@ suspend fun main(args: Array<String>) {
         itemService.resetAndSave()
     }
 
-    itemService.showItems()
+    val outputService: OutputService by kodein.instance()
+
+    outputService.showResults()
 }
 
 private fun initStorageWithKodein(configService: ConfigService) {
@@ -88,5 +92,7 @@ private fun initKodein() {
         bind<ConfigService>() with singleton { ConfigService() }
         bind<CountItemService>() with singleton { CountItemService() }
         bind<AnalyseWorldService>() with singleton { AnalyseWorldService(instance()) }
+        // TODO : Create external module to choose service
+        bind<OutputService>() with singleton { OutputHtmlService(instance()) }
     }
 }

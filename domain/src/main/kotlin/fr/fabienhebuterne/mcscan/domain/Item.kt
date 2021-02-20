@@ -1,5 +1,7 @@
 package fr.fabienhebuterne.mcscan.domain
 
+import fr.fabienhebuterne.mcscan.domain.output.DIV
+import fr.fabienhebuterne.mcscan.domain.output.MinecraftColor
 import kotlinx.serialization.Serializable
 
 data class Item(
@@ -53,27 +55,78 @@ data class ItemLocation(
     val z: Int
 )
 
+// TODO FHE : Kotlin has a bug with @Serializable on inherited class need to use abstract to work
+// Issue : https://youtrack.jetbrains.com/issue/KT-38958
+@Serializable
+abstract class ItemBase {
+    abstract val text: String
+    abstract val color: String?
+    abstract val bold: Boolean
+    abstract val italic: Boolean
+    abstract val underlined: Boolean
+    abstract val strikethrough: Boolean
+    abstract val obfuscated: Boolean
+    abstract val extra: List<ItemBase>
+
+    fun getExtra(div: DIV, itemBase: ItemBase, first: Boolean = true): String {
+        if (itemBase.extra.isNullOrEmpty() && first) {
+            getExtraText(itemBase, div, itemBase.text)
+        }
+
+        return itemBase.extra.map {
+            getExtraText(it, div, getExtra(div, it, false))
+        }.fold(itemBase.text) { acc, s -> acc + s }
+    }
+
+    private fun getExtraText(
+        itemBase: ItemBase,
+        div: DIV,
+        text: String
+    ) {
+        if (itemBase.color != null) {
+            val minecraftColor = MinecraftColor.valueOf(itemBase.color?.toUpperCase() ?: "")
+            div.span("color: ${minecraftColor.hexCode};") {
+                +text
+            }
+        } else {
+            div.span {
+                +text
+            }
+        }
+    }
+}
+
+fun ItemBase.getExtraBase(): String {
+    if (this.extra.isNullOrEmpty()) {
+        return text
+    }
+
+    return this.extra.map {
+        it.getExtraBase()
+    }.fold(text) { acc, s -> acc + s }
+}
+
 @Serializable
 data class ItemName(
-    val text: String = "",
-    val color: String? = null,
-    val bold: Boolean = false,
-    val italic: Boolean = false,
-    val underlined: Boolean = false,
-    val strikethrough: Boolean = false,
-    val obfuscated: Boolean = false,
-    val translate: String? = null,
-    val extra: List<ItemName> = listOf()
-)
+    override val text: String = "",
+    override val color: String? = null,
+    override val bold: Boolean = false,
+    override val italic: Boolean = false,
+    override val underlined: Boolean = false,
+    override val strikethrough: Boolean = false,
+    override val obfuscated: Boolean = false,
+    override val extra: List<ItemName> = listOf(),
+    val translate: String? = null
+) : ItemBase()
 
 @Serializable
 data class ItemLore(
-    val text: String,
-    val color: String? = null,
-    val bold: Boolean = false,
-    val italic: Boolean = false,
-    val underlined: Boolean = false,
-    val strikethrough: Boolean = false,
-    val obfuscated: Boolean = false,
-    val extra: List<ItemLore> = listOf()
-)
+    override val text: String = "",
+    override val color: String? = null,
+    override val bold: Boolean = false,
+    override val italic: Boolean = false,
+    override val underlined: Boolean = false,
+    override val strikethrough: Boolean = false,
+    override val obfuscated: Boolean = false,
+    override val extra: List<ItemLore> = listOf()
+) : ItemBase()
