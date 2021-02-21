@@ -37,6 +37,12 @@ Arguments :
 --playerData or -p ./path/to/player.dat : Analyze one player file
 ```
 
+## Wiki
+
+Don't forget to read wiki before ask questions.
+
+[Wiki Home](https://github.com/fhebuterne/McScanKt/wiki)
+
 ## Analyzed elements
 
 <table>
