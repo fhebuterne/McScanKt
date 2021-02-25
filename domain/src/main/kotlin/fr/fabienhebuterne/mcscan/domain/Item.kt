@@ -76,7 +76,7 @@ abstract class ItemBase {
             return getColoredText(it, div)
         } ?: run {
             if (firstColor != null) {
-                getColoredText(firstColor, div)
+                return getColoredText(firstColor, div)
             }
 
             return div.span {

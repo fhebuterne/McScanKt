@@ -12,10 +12,17 @@ class OutputHtmlService(private val countItemService: CountItemService) : Output
     override fun showResults() {
         logger.info { "start parsing item into html" }
 
-        val inputStream: InputStream = javaClass.classLoader?.getResource("template.html")?.openStream()
+        File("./mcscankt-results").mkdir()
+
+        val htmlDefaultTemplate: InputStream = javaClass.classLoader?.getResource("template.html")?.openStream()
             ?: throw IllegalAccessException("template html not found")
-        val template = File("./template.html")
-        template.writeBytes(inputStream.readAllBytes())
+        val template = File("./mcscankt-results/template.html")
+        template.writeBytes(htmlDefaultTemplate.readAllBytes())
+
+        val fontDefaultTemplate: InputStream = javaClass.classLoader?.getResource("minecraftia-regular.ttf")?.openStream()
+            ?: throw IllegalAccessException("custom font not found")
+        val fontTemplate = File("./mcscankt-results/minecraftia-regular.ttf")
+        fontTemplate.writeBytes(fontDefaultTemplate.readAllBytes())
 
         // TODO : Split into pages when have too many item in one page
         countItemService.getCounter()
