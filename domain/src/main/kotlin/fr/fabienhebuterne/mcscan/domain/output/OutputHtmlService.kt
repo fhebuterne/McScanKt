@@ -23,7 +23,6 @@ class OutputHtmlService(private val countItemService: CountItemService) : Output
             .sortedByDescending { (_, value) -> value }
             .forEach { (item, count) ->
                 logger.info { "parsing current item into html and writing to file ..." }
-
                 val parseItemToHtml = parseItemToHtml(item, count)
                 template.appendText(parseItemToHtml.toString())
             }
@@ -35,7 +34,9 @@ class OutputHtmlService(private val countItemService: CountItemService) : Output
         return div("item") {
             div("item-column-first") {
                 div("name") {
-                    item.name.getExtra(this, item.name)
+                    item.name.forEach {
+                        it.getFormattedText(this, item.name[0].color)
+                    }
                 }
                 div("enchantments") {
                     item.enchantments.forEach {
@@ -49,7 +50,9 @@ class OutputHtmlService(private val countItemService: CountItemService) : Output
                 div("lores") {
                     item.lores.forEach {
                         div {
-                            it.getExtra(this, it)
+                            it.forEach { itemLore ->
+                                itemLore.getFormattedText(this, it[0].color)
+                            }
                         }
                     }
                 }

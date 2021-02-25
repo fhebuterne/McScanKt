@@ -7,8 +7,8 @@ data class ItemCounter(
 
 data class ItemStorage(
     val id: String,
-    val name: ItemName,
-    val lores: List<ItemLore> = listOf(),
+    val name: MutableList<ItemName> = mutableListOf(),
+    val lores: MutableList<MutableList<ItemLore>> = mutableListOf(),
     val enchantments: List<ItemEnchantment> = listOf(),
     val locations: List<ItemLocationCounter> = listOf(),
     val uuidInventories: List<ItemUuidInventoryCounter> = listOf()

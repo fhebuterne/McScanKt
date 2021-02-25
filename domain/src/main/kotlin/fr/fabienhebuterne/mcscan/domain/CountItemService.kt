@@ -107,8 +107,8 @@ class CountItemService {
                 val kotlinx = Json { isLenient = true; ignoreUnknownKeys = true }
 
                 val id: String = nbt.getString("id")
-                val name: ItemName = getItemName(nbtCompoundTag, kotlinx)
-                val lores: List<ItemLore> = getItemLore(nbtCompoundTag, kotlinx)
+                val name: MutableList<ItemName> = getItemName(nbtCompoundTag, kotlinx)
+                val lores: MutableList<MutableList<ItemLore>> = getItemLore(nbtCompoundTag, kotlinx)
                 val count: Int = nbt.getByte("Count").toInt()
 
                 val enchantments: List<ItemEnchantment> = if (nbtCompoundTag.containsKey("Enchantments")) {
@@ -124,7 +124,7 @@ class CountItemService {
                     return
                 }
 
-                if (name.getExtraBase().isNotEmpty() || lores.isNotEmpty()) {
+                if (name.isNotEmpty() || lores.isNotEmpty()) {
                     val item = Item(id, name, lores, enchantments)
 
                     if (!counter.containsKey(item)) {
@@ -136,50 +136,73 @@ class CountItemService {
             }
     }
 
+    // TODO .copy don't work with abstract how to refactor with BaseItem ?
+    private fun deserializeExtras(currentItem: ItemName, itemName: MutableList<ItemName>): MutableList<ItemName> {
+        currentItem.extra.forEach {
+            itemName.add(it.copy(extra = mutableListOf()))
+            deserializeExtras(it, itemName)
+        }
+        return itemName
+    }
+
+    private fun deserializeLoresExtras(currentItem: ItemLore, itemLore: MutableList<ItemLore>): MutableList<ItemLore> {
+        currentItem.extra.forEach {
+            itemLore.add(it.copy(extra = mutableListOf()))
+            deserializeLoresExtras(it, itemLore)
+        }
+        return itemLore
+    }
+
     private fun getItemName(
         nbtCompoundTag: NbtCompound,
         kotlinx: Json
-    ): ItemName = when {
+    ): MutableList<ItemName> = when {
         nbtCompoundTag.getCompound("display")["Name"] == null -> {
-            ItemName()
+            mutableListOf()
         }
         nbtCompoundTag.getCompound("display").getString("Name").startsWith("[{") -> {
-            kotlinx.decodeFromString<List<ItemName>>(
+            kotlinx.decodeFromString(
                 nbtCompoundTag.getCompound("display").getString("Name")
-            )[0]
+            )
         }
         nbtCompoundTag.getCompound("display").getString("Name").startsWith("{") -> {
             try {
-                kotlinx.decodeFromString(nbtCompoundTag.getCompound("display").getString("Name"))
+                val mutableList = mutableListOf<ItemName>()
+                val itemNames = kotlinx.decodeFromString<ItemName>(nbtCompoundTag.getCompound("display").getString("Name"))
+                mutableList.add(itemNames.copy(extra = mutableListOf()))
+                deserializeExtras(itemNames, mutableList)
             } catch (e: Exception) {
-                ItemName(nbtCompoundTag.getCompound("display").getString("Name"))
+                mutableListOf(ItemName(nbtCompoundTag.getCompound("display").getString("Name")))
             }
         }
         else -> {
-            ItemName(nbtCompoundTag.getCompound("display").getString("Name"))
+            mutableListOf(ItemName(nbtCompoundTag.getCompound("display").getString("Name")))
         }
     }
 
     private fun getItemLore(
         nbtCompoundTag: NbtCompound,
         kotlinx: Json
-    ): List<ItemLore> {
+    ): MutableList<MutableList<ItemLore>> {
         return if (nbtCompoundTag.getCompound("display").containsKey("Lore")) {
-            nbtCompoundTag.getCompound("display").getStringList("Lore").flatMap { nbtString ->
+            nbtCompoundTag.getCompound("display").getStringList("Lore").map { nbtString ->
                 when {
                     nbtString.value.startsWith("[{") -> {
-                        kotlinx.decodeFromString<List<ItemLore>>(nbtString.value)
+                        kotlinx.decodeFromString(nbtString.value)
                     }
                     nbtString.value.startsWith("{") -> {
-                        listOf(kotlinx.decodeFromString<ItemLore>(nbtString.value))
+                        val mutableList = mutableListOf<ItemLore>()
+                        val itemLores = kotlinx.decodeFromString<ItemLore>(nbtString.value)
+                        mutableList.add(itemLores.copy(extra = mutableListOf()))
+                        deserializeLoresExtras(itemLores, mutableList)
                     }
                     else -> {
-                        listOf(ItemLore(nbtString.value))
+                        mutableListOf(ItemLore(nbtString.value))
                     }
                 }
-            }
+            }.toMutableList()
         } else {
-            listOf()
+            mutableListOf()
         }
     }
 

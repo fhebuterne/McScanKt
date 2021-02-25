@@ -17,17 +17,20 @@ internal class CountItemServiceTest : AbstractCountItemService("1.16.5") {
         // then
         val firstExceptedItem = Item(
             "minecraft:diamond_axe",
-            ItemName("aaaa", bold = true),
-            listOf(),
+            mutableListOf(ItemName("aaaa", bold = true)),
+            mutableListOf(),
             listOf(ItemEnchantment(id = "minecraft:flame", level = 2))
         )
 
         val secondExceptedItem = Item(
             "minecraft:diamond_axe",
-            ItemName("test", "red", true),
-            listOf(
-                ItemLore("test lore ok", bold = true),
-                ItemLore("aaa", color = "green", bold = true)
+            mutableListOf(
+                ItemName("test", "red", true),
+                ItemName("", "red", false)
+            ),
+            mutableListOf(
+                mutableListOf(ItemLore("test lore ok", bold = true)),
+                mutableListOf(ItemLore("aaa", color = "green", bold = true))
             ),
             listOf()
         )
@@ -48,12 +51,10 @@ internal class CountItemServiceTest : AbstractCountItemService("1.16.5") {
         // then
         val firstExceptedItem = Item(
             "minecraft:diamond_axe",
-            ItemName(text = "aaaa", bold = true),
-            listOf(),
+            mutableListOf(ItemName(text = "aaaa", bold = true)),
+            mutableListOf(),
             listOf(ItemEnchantment(id = "minecraft:flame", level = 2))
         )
-
-        println(countItemService.getCounter())
 
         expectThat(countItemService.getCounter()[firstExceptedItem]).isEqualTo(3)
     }

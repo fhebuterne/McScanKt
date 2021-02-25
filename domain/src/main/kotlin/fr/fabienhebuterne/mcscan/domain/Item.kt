@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 data class Item(
     val id: String,
-    val name: ItemName,
-    val lores: List<ItemLore> = listOf(),
+    val name: MutableList<ItemName> = mutableListOf(),
+    val lores: MutableList<MutableList<ItemLore>> = mutableListOf(),
     val enchantments: List<ItemEnchantment> = listOf(),
     val locations: HashMap<ItemLocation, Int> = hashMapOf(),
     val uuidInventories: HashMap<String, Int> = hashMapOf()
@@ -68,44 +68,33 @@ abstract class ItemBase {
     abstract val obfuscated: Boolean
     abstract val extra: List<ItemBase>
 
-    fun getExtra(div: DIV, itemBase: ItemBase, first: Boolean = true): String {
-        if (itemBase.extra.isNullOrEmpty() && first) {
-            getExtraText(itemBase, div, itemBase.text)
-        }
-
-        return itemBase.extra.map {
-            getExtraText(it, div, getExtra(div, it, false))
-        }.fold(itemBase.text) { acc, s -> acc + s }
-    }
-
-    private fun getExtraText(
-        itemBase: ItemBase,
+    fun getFormattedText(
         div: DIV,
-        text: String
+        firstColor: String?
     ) {
-        itemBase.color?.let {
-            val minecraftColor = if (!it.contains("#")) {
-                MinecraftColor.valueOf(it.toUpperCase()).hexCode
-            } else {
-                it
+        color?.let {
+            return getColoredText(it, div)
+        } ?: run {
+            if (firstColor != null) {
+                getColoredText(firstColor, div)
             }
-            div.span("color: ${minecraftColor};") {
+
+            return div.span {
                 +text
             }
-        } ?: div.span {
+        }
+    }
+
+    private fun getColoredText(color: String, div: DIV) {
+        val minecraftColor = if (!color.contains("#")) {
+            MinecraftColor.valueOf(color.toUpperCase()).hexCode
+        } else {
+            color
+        }
+        return div.span("color: ${minecraftColor};") {
             +text
         }
     }
-}
-
-fun ItemBase.getExtraBase(): String {
-    if (this.extra.isNullOrEmpty()) {
-        return text
-    }
-
-    return this.extra.map {
-        it.getExtraBase()
-    }.fold(text) { acc, s -> acc + s }
 }
 
 @Serializable
@@ -117,7 +106,7 @@ data class ItemName(
     override val underlined: Boolean = false,
     override val strikethrough: Boolean = false,
     override val obfuscated: Boolean = false,
-    override val extra: List<ItemName> = listOf(),
+    override val extra: MutableList<ItemName> = mutableListOf(),
     val translate: String? = null
 ) : ItemBase()
 
