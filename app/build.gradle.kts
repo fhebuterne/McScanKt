@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.2")
     implementation("org.kodein.di:kodein-di:7.3.1")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.4")
     implementation("org.slf4j:slf4j-api:1.7.30")
