@@ -6,9 +6,17 @@ plugins {
     application
     java
     id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("jacoco")
 }
 
 allprojects {
+    apply(plugin = "kotlin")
+    apply(plugin = "jacoco")
+
+    jacoco {
+        toolVersion = "0.8.6"
+    }
+
     group = "fr.fabienhebuterne"
     version = "1.0.1"
 
@@ -17,6 +25,19 @@ allprojects {
         maven("https://jitpack.io")
         maven("https://kotlin.bintray.com/kotlinx")
         jcenter()
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+        finalizedBy(tasks.jacocoTestReport)
+    }
+
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+        reports {
+            xml.isEnabled = true
+            csv.isEnabled = true
+        }
     }
 
     tasks.withType<KotlinCompile> {
