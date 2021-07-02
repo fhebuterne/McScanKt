@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    implementation("org.kodein.di:kodein-di:7.3.1")
-    implementation("org.litote.kmongo:kmongo:4.2.4")
-    implementation("org.litote.kmongo:kmongo-async:4.2.4")
-    implementation("org.litote.kmongo:kmongo-coroutine:4.2.4")
+    implementation("org.kodein.di:kodein-di:${Versions.kodein}")
+    implementation("org.litote.kmongo:kmongo:${Versions.kmongo}")
+    implementation("org.litote.kmongo:kmongo-async:${Versions.kmongo}")
+    implementation("org.litote.kmongo:kmongo-coroutine:${Versions.kmongo}")
     implementation(project(":domain"))
 }

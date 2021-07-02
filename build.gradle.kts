@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.30"
-    kotlin("plugin.serialization") version "1.4.30"
+    kotlin("jvm") version Versions.kotlinJvm
+    kotlin("plugin.serialization") version Versions.kotlinSerialization
     application
     java
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    id("com.github.johnrengelman.shadow") version Versions.shadowJar
     id("jacoco")
 }
 
@@ -14,7 +14,7 @@ allprojects {
     apply(plugin = "jacoco")
 
     jacoco {
-        toolVersion = "0.8.6"
+        toolVersion = Versions.jacoco
     }
 
     group = "fr.fabienhebuterne"
@@ -24,7 +24,6 @@ allprojects {
         mavenCentral()
         maven("https://jitpack.io")
         maven("https://kotlin.bintray.com/kotlinx")
-        jcenter()
     }
 
     tasks.test {
@@ -35,8 +34,8 @@ allprojects {
     tasks.jacocoTestReport {
         dependsOn(tasks.test)
         reports {
-            xml.isEnabled = true
-            csv.isEnabled = true
+            xml.required.set(true)
+            csv.required.set(true)
         }
     }
 
@@ -46,5 +45,5 @@ allprojects {
 }
 
 application {
-    mainClassName = "fr.fabienhebuterne.mcscan.McScanKt"
+    mainClass.set("fr.fabienhebuterne.mcscan.McScanKt")
 }
