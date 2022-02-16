@@ -16,11 +16,11 @@ This project use [Kotlin](https://kotlinlang.org/) (typesafe and modern language
 
 ## Requirements
 
-- Java 11
+- Java 17
 
 ## Build
 
-McScanKt use Gradle 6, to build use this command :
+McScanKt use Gradle 7, to build use this command :
 
 ```
 gradlew clean build

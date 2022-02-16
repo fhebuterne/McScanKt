@@ -39,8 +39,16 @@ allprojects {
         }
     }
 
+    val javaVersion = 17
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(javaVersion))
+        }
+    }
+
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = javaVersion.toString()
     }
 }
 
