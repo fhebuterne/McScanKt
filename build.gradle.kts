@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version Versions.kotlinJvm
-    kotlin("plugin.serialization") version Versions.kotlinSerialization
+    kotlin("plugin.serialization") version 1.8.10
     application
     java
     id("com.github.johnrengelman.shadow") version Versions.shadowJar
