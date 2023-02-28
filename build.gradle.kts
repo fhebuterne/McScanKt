@@ -5,7 +5,7 @@ plugins {
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     application
     java
-    id("com.github.johnrengelman.shadow") version Versions.shadowJar
+    id("com.github.johnrengelman.shadow") version 8.1.0
     id("jacoco")
 }
 
