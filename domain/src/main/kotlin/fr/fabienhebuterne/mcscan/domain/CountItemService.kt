@@ -6,7 +6,9 @@ import br.com.gamemods.nbtmanipulator.NbtInt
 import br.com.gamemods.nbtmanipulator.NbtList
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
 
 class CountItemService {
 
@@ -35,7 +37,7 @@ class CountItemService {
 
         tileEntities
             .filter { nbtCompound ->
-                patternContainers.matcher(nbtCompound.getString("id").toLowerCase()).find()
+                patternContainers.matcher(nbtCompound.getString("id").lowercase()).find()
             }
             .forEach {
                 val itemLocation = ItemLocation(
@@ -52,7 +54,7 @@ class CountItemService {
         val patternContainers = Pattern.compile("^(minecraft:)?itemframe$|^(minecraft:)?item_frame$")
 
         entities
-            .filter { nbtCompound -> patternContainers.matcher(nbtCompound.getString("id").toLowerCase()).find() }
+            .filter { nbtCompound -> patternContainers.matcher(nbtCompound.getString("id").lowercase()).find() }
             .forEach { entity ->
                 val itemLocation = ItemLocation(
                     entity.getInt("TileX"),

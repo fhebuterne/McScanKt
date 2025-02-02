@@ -87,7 +87,7 @@ abstract class ItemBase {
 
     private fun getColoredText(color: String, div: DIV) {
         val minecraftColor = if (!color.contains("#")) {
-            MinecraftColor.valueOf(color.toUpperCase()).hexCode
+            MinecraftColor.valueOf(color.uppercase()).hexCode
         } else {
             color
         }

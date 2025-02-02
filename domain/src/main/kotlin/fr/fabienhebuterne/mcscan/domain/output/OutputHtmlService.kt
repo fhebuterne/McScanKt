@@ -2,7 +2,7 @@ package fr.fabienhebuterne.mcscan.domain.output
 
 import fr.fabienhebuterne.mcscan.domain.CountItemService
 import fr.fabienhebuterne.mcscan.domain.Item
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.io.InputStream
 

@@ -3,11 +3,11 @@ package fr.fabienhebuterne.mcscan.domain
 import br.com.gamemods.nbtmanipulator.NbtIO
 import br.com.gamemods.regionmanipulator.Chunk
 import br.com.gamemods.regionmanipulator.RegionIO
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import mu.KotlinLogging
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.regex.Pattern

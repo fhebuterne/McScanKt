@@ -5,7 +5,7 @@ plugins {
     kotlin("plugin.serialization") version Versions.kotlinSerialization
     application
     java
-    id("com.github.johnrengelman.shadow") version Versions.shadowJar
+    id("com.gradleup.shadow") version Versions.shadowJar
     id("jacoco")
 }
 
@@ -39,7 +39,7 @@ allprojects {
         }
     }
 
-    val javaVersion = 17
+    val javaVersion = 21
 
     java {
         toolchain {

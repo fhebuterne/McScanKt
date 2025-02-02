@@ -8,7 +8,7 @@ import fr.fabienhebuterne.mcscan.storage.ItemCounterRepositoryNone
 import fr.fabienhebuterne.mcscan.storage.KodeinMongo
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.instance

@@ -16,7 +16,7 @@ dependencies {
     implementation("br.com.gamemods:nbt-manipulator:${Versions.nbtManipulator}")
     implementation("org.jetbrains.kotlinx:kotlinx-cli:${Versions.kotlinxCli}")
     implementation("org.kodein.di:kodein-di:${Versions.kodein}")
-    implementation("io.github.microutils:kotlin-logging-jvm:${Versions.kotlinLogging}")
+    implementation("io.github.oshai:kotlin-logging-jvm:${Versions.kotlinLogging}")
     implementation("org.slf4j:slf4j-api:${Versions.slf4jApi}")
     implementation("ch.qos.logback:logback-core:${Versions.logback}")
     implementation("ch.qos.logback:logback-classic:${Versions.logback}")
